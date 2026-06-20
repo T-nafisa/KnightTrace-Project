@@ -1,0 +1,75 @@
+<%- include("../partials/header") %>
+
+<section class="page-title">
+    <h1>Knight Code Lab</h1>
+    <p>Explain, debug, review, or generate test cases for code.</p>
+</section>
+
+<section class="card">
+    <% if (error) { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+
+    <form action="/code/analyze" method="POST">
+        <label for="actionType">Choose Action</label>
+        <select name="actionType" id="actionType" required>
+            <option value="Explain Code" <%= formData.actionType === "Explain Code" ? "selected" : "" %>>Explain Code</option>
+            <option value="Debug Code" <%= formData.actionType === "Debug Code" ? "selected" : "" %>>Debug Code</option>
+            <option value="Review Code" <%= formData.actionType === "Review Code" ? "selected" : "" %>>Review Code</option>
+            <option value="Generate Test Cases" <%= formData.actionType === "Generate Test Cases" ? "selected" : "" %>>Generate Test Cases</option>
+        </select>
+
+        <label for="language">Language</label>
+        <select name="language" id="language" required>
+            <option value="JavaScript" <%= formData.language === "JavaScript" ? "selected" : "" %>>JavaScript</option>
+            <option value="Python" <%= formData.language === "Python" ? "selected" : "" %>>Python</option>
+            <option value="Java" <%= formData.language === "Java" ? "selected" : "" %>>Java</option>
+            <option value="C++" <%= formData.language === "C++" ? "selected" : "" %>>C++</option>
+        </select>
+
+        <label for="codeText">Paste Code</label>
+        <textarea class="code-textarea" name="codeText" id="codeText" rows="12" required><%= formData.codeText || "" %></textarea>
+
+        <button type="submit">Run AI Analysis</button>
+    </form>
+</section>
+
+<% if (result) { %>
+    <section class="card result-card">
+        <h2><%= result.title %></h2>
+        <p><%= result.summary %></p>
+
+        <h3>Issues</h3>
+        <ul>
+            <% result.issues.forEach(function (item) { %>
+                <li><%= item %></li>
+            <% }) %>
+        </ul>
+
+        <h3>Improvements</h3>
+        <ul>
+            <% result.improvements.forEach(function (item) { %>
+                <li><%= item %></li>
+            <% }) %>
+        </ul>
+
+        <h3>Complexity</h3>
+        <p>Time: <%= result.timeComplexity %></p>
+        <p>Space: <%= result.spaceComplexity %></p>
+
+        <h3>Test Cases</h3>
+        <% result.testCases.forEach(function (test) { %>
+            <div class="mini-card">
+                <p><strong>Input:</strong> <%= test.input %></p>
+                <p><strong>Expected Output:</strong> <%= test.expectedOutput %></p>
+            </div>
+        <% }) %>
+
+        <h3>Corrected Code</h3>
+        <pre class="code-output"><%= result.correctedCode %></pre>
+
+        <a class="button secondary" href="/sessions">View Saved History</a>
+    </section>
+<% } %>
+
+<%- include("../partials/footer") %>

@@ -1,0 +1,1 @@
+console.log("KnightTrace frontend JS loaded");

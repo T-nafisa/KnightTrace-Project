@@ -1,0 +1,34 @@
+<%- include("../partials/header") %>
+
+<section class="auth-card">
+    <h1>Sign In</h1>
+    <p>Continue to your KnightTrace dashboard.</p>
+
+    <% if (error) { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+
+    <form action="/users/signin/submit" method="POST">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <div class="oauth-box">
+        <p>Or continue with</p>
+
+        <a class="button secondary full-width" href="/auth/google">Google</a>
+        <a class="button secondary full-width" href="/auth/github">GitHub</a>
+    </div>
+
+    <p class="small-text">
+        New to KnightTrace?
+        <a href="/users/signup">Create account</a>
+    </p>
+</section>
+
+<%- include("../partials/footer") %>

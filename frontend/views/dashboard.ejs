@@ -1,0 +1,30 @@
+<%- include("partials/header") %>
+
+<section class="page-title">
+    <h1>Dashboard</h1>
+    <p>Welcome back, <%= currentUser.username %>.</p>
+</section>
+
+<section class="card-grid">
+    <a class="card link-card" href="/code">
+        <h2>Knight Code Lab</h2>
+        <p>Explain, debug, review, and generate test cases.</p>
+    </a>
+
+    <a class="card link-card" href="/interviews/new">
+        <h2>Interview Practice</h2>
+        <p>Practice live behavioral and highly technical code sprints inspired by big tech interviews.</p>
+    </a>
+
+    <a class="card link-card" href="/quizzes/new">
+        <h2>Quiz Generator</h2>
+        <p>Generate MCQ quizzes from any tech topic.</p>
+    </a>
+
+    <a class="card link-card" href="/sessions">
+        <h2>Saved History</h2>
+        <p>Review your saved Practice sessions and notes.</p>
+    </a>
+</section>
+
+<%- include("partials/footer") %>

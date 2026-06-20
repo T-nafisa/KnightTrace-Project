@@ -1,0 +1,30 @@
+<%- include("../partials/header") %>
+
+<section class="auth-card">
+    <h1>Create Account</h1>
+    <p>Start using KnightTrace for AI-powered technical coding preparation.</p>
+
+    <% if (error) { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+
+    <form action="/users/signup/submit" method="POST">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="small-text">
+        Already have an account?
+        <a href="/users/signin">Sign in</a>
+    </p>
+</section>
+
+<%- include("../partials/footer") %>

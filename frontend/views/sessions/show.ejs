@@ -1,0 +1,51 @@
+<%- include("../partials/header") %>
+
+<section class="page-title">
+    <h1><%= savedSession.title %></h1>
+    <p><%= savedSession.type %></p>
+</section>
+
+<section class="card">
+    <h2>Original Input</h2>
+    <pre class="code-output"><%= savedSession.userInput %></pre>
+</section>
+
+<section class="card">
+    <h2>AI Result</h2>
+
+    <h3>Summary</h3>
+    <p><%= savedSession.aiResponse.summary %></p>
+
+    <h3>Issues</h3>
+    <ul>
+        <% savedSession.aiResponse.issues.forEach(function (item) { %>
+            <li><%= item %></li>
+        <% }) %>
+    </ul>
+
+    <h3>Improvements</h3>
+    <ul>
+        <% savedSession.aiResponse.improvements.forEach(function (item) { %>
+            <li><%= item %></li>
+        <% }) %>
+    </ul>
+
+    <h3>Complexity</h3>
+    <p>Time: <%= savedSession.aiResponse.timeComplexity %></p>
+    <p>Space: <%= savedSession.aiResponse.spaceComplexity %></p>
+
+    <h3>Corrected Code</h3>
+    <pre class="code-output"><%= savedSession.aiResponse.correctedCode %></pre>
+</section>
+
+<section class="card">
+    <h2>Your Notes</h2>
+    <p><%= savedSession.userNotes || "No notes added." %></p>
+
+    <div class="button-row">
+        <a class="button secondary" href="/sessions/<%= savedSession._id %>/edit">Edit</a>
+        <a class="button secondary" href="/sessions">Back</a>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>
