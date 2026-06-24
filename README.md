@@ -2,6 +2,10 @@
 
 KnightTrace is a full-stack GenAI web app for coding practice, code review, interview preparation, quizzes, and saved learning history.
 
+## Live Demo
+
+Deployed app URL: https://knighttrace-project.onrender.com
+
 The app uses Node.js, Express, MongoDB, Passport.js, EJS, CSS, JavaScript, and the Google Gemini API.
 
 ## Main Features
