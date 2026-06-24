@@ -29,7 +29,6 @@ router.post("/create", ensureAuthenticated, async function (req, res) {
         var result = await askGemini(buildQuizPrompt({ topic, difficulty: req.body.difficulty, count: req.body.count }));
         result.questions = Array.isArray(result.questions) ? result.questions : [];
 
-        console.time("Code Lab Mongo Save"); // checks how long database save takes
         var saved = await getCollection("quizzes").insertOne({
             userId: req.user._id.toString(),
             type: "quiz",
