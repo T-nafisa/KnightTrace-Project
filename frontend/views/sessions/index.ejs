@@ -46,7 +46,7 @@
                     <a class="button secondary" href="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/edit">Edit</a>
 
                     <form action="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/favorite" method="POST">
-                        <button type="submit"><i class="<%= item.isFavorite ? "fa-solid" : "fa-regular" %> fa-star"></i> <%= item.isFavorite ? "Unsave" : "Save" %></button>
+                        <button type="submit"><i class="<%= item.isFavorite ? "fa-solid" : "fa-regular" %> fa-star"></i> <%= item.isFavorite ? "Unfavorite" : "Favorite" %></button>
                     </form>
 
                     <form action="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/delete" method="POST" onsubmit="return confirm('Delete this saved session?');">
