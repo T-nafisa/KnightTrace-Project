@@ -2,28 +2,55 @@
 
 <section class="page-title">
     <h1>Saved Sessions</h1>
-    <p>Your AI Code Lab history is saved here.</p>
+    <p>Your saved Code Lab, Interview, and Quiz history.</p>
+</section>
+
+<form class="search-form" action="/sessions" method="GET">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" name="search" value="<%= search || "" %>" placeholder="Search saved sessions...">
+    <input type="hidden" name="filter" value="<%= filter %>">
+    <button type="submit" class="button secondary small-btn">Search</button>
+</form>
+
+<section class="filter-row">
+    <a class="button secondary <%= filter === "all" ? "active" : "" %>" href="/sessions">All</a>
+    <a class="button secondary <%= filter === "code" ? "active" : "" %>" href="/sessions?filter=code">Code Reviews</a>
+    <a class="button secondary <%= filter === "interview" ? "active" : "" %>" href="/sessions?filter=interview">Interviews</a>
+    <a class="button secondary <%= filter === "quiz" ? "active" : "" %>" href="/sessions?filter=quiz">Quizzes</a>
+    <a class="button secondary <%= filter === "favorite" ? "active" : "" %>" href="/sessions?filter=favorite">Favorites</a>
 </section>
 
 <% if (savedSessions.length === 0) { %>
-    <section class="card">
-        <p>No saved sessions yet.</p>
-        <a class="button secondary" href="/code">Start Code Lab</a>
+    <section class="card empty-state">
+        <h2>No sessions found</h2>
+        <p>Start with Code Lab, Interview Practice, or Quiz Practice.</p>
+        <div class="button-row">
+            <a class="button secondary" href="/code">Code Lab</a>
+            <a class="button secondary" href="/interviews/new">Interview</a>
+            <a class="button secondary" href="/quizzes/new">Quiz</a>
+        </div>
     </section>
 <% } else { %>
-    <section class="card-grid">
+    <section class="card-grid session-grid">
         <% savedSessions.forEach(function (item) { %>
-            <div class="card">
-                <h2><%= item.title %></h2>
-                <p><%= item.type %> | <%= item.language || item.topic || "General" %></p>
-                <p><%= item.createdAt.toDateString() %></p>
+            <div class="card session-card">
+                <span class="badge <%= item.type %>"><%= item.type %></span>
+                <h2>
+                    <% if (item.isFavorite) { %><i class="fa-solid fa-star favorite-icon"></i><% } %>
+                    <%= item.title %>
+                </h2>
+                <p><%= item.topic || item.language || item.role || "General" %></p>
 
-                <div class="button-row">
-                    <a class="button secondary" href="/sessions/<%= item._id %>">View</a>
-                    <a class="button secondary" href="/sessions/<%= item._id %>/edit">Edit</a>
+                <div class="button-row session-actions">
+                    <a class="button secondary" href="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>">View</a>
+                    <a class="button secondary" href="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/edit">Edit</a>
 
-                    <form action="/sessions/<%= item._id %>/delete" method="POST">
-                        <button type="submit">Delete</button>
+                    <form action="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/favorite" method="POST">
+                        <button type="submit"><i class="<%= item.isFavorite ? "fa-solid" : "fa-regular" %> fa-star"></i> <%= item.isFavorite ? "Unsave" : "Save" %></button>
+                    </form>
+
+                    <form action="/sessions/<%= getTypeUrl(item) %>/<%= item._id %>/delete" method="POST" onsubmit="return confirm('Delete this saved session?');">
+                        <button type="submit"><i class="fa-solid fa-trash"></i> Delete</button>
                     </form>
                 </div>
             </div>

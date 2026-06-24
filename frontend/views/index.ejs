@@ -1,30 +1,607 @@
 <%- include("partials/header") %>
 
-<section class="hero">
-    <h1>KnightTrace</h1>
-    <p>Practice coding interviews, review code, debug problems, and challenge yourself with quizzes.</p>
+<script>document.body.classList.add('landing-page');</script>
+<link rel="stylesheet" href="/stylesheets/landing.css">
 
-    <div class="button-row">
-        <a class="button primary" href="/users/signup">Create Account</a>
-        <a class="button secondary" href="/users/signin">Sign In</a>
+<!-- LANDING PAGE- Hero Section-->
+<section class="lp-section lp-hero">
+    <div class="lp-container">
+        <div class="lp-hero-split">
+
+            <!-- Left: text -->
+            <div class="lp-hero-text">
+                <div class="lp-badge">
+                    <i class="fa fa-star"></i>
+                    Gemini AI Powered - Free to Start
+                </div>
+
+                <h1 class="lp-h1">
+                    Trace bugs.<br>Practice interviews.<br>
+                    <span class="lp-gradient">Learn code smarter.</span>
+                </h1>
+
+                <p class="lp-subtext">
+                    KnightTrace is an AI-powered coding assistant that reviews your code,
+                    explains mistakes line by line, and prepares you for technical interviews.
+                </p>
+
+                <div class="lp-cta-row">
+                    <a href="/users/signup" class="lp-btn lp-btn-primary lp-btn-lg">
+                        <i class="fa-solid fa-chess-knight"></i> Start Free - No Card Needed
+                    </a>
+                    <a href="#demo-anchor" class="lp-btn lp-btn-ghost">
+                        <i class="fa-solid fa-play"></i> See It In Action
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: live AI demo card -->
+            <div class="lp-hero-demo" id="demo-anchor">
+                <div class="lp-demo-card">
+                    <div class="lp-demo-header">
+                        <span class="lp-dot red"></span>
+                        <span class="lp-dot yellow"></span>
+                        <span class="lp-dot green"></span>
+                        <span class="lp-demo-title">KnightTrace: Live AI Review</span>
+                    </div>
+
+                    <!-- Code typing panel -->
+                    <div class="lp-code-panel" id="lp-code-panel">
+                        <span class="lp-cursor" id="lp-cursor">|</span>
+                    </div>
+                    <!-- Analysis loading bar -->
+                    <div class="lp-analysis-bar" id="lp-analysis-bar" style="display:none">
+                        <div class="lp-analysis-spinner"></div>
+                        <span>Gemini is analyzing your code…</span>
+                    </div>
+                    <!-- AI results -->
+                    <div class="lp-results" id="lp-ai-results" style="display:none">
+                        <div class="lp-result-item lp-result-bug">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div>
+                                <strong>Bug Found</strong>
+                                <p><code>id = null</code> - assignment used instead of comparison</p>
+                            </div>
+                        </div>
+                        <div class="lp-result-item lp-result-fix">
+                            <i class="fa-solid fa-wrench"></i>
+                            <div>
+                                <strong>Suggested Fix</strong>
+                                <p>Change <code>=</code> to <code>===</code> on line 2</p>
+                            </div>
+                        </div>
+                        <div class="lp-result-item lp-result-why">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <div>
+                                <strong>Why It Matters</strong>
+                                <p><code>=</code> assigns a value. <code>===</code> compares without type coercion.</p>
+                            </div>
+                        </div>
+                        <div class="lp-result-item lp-result-practice">
+                            <i class="fa-solid fa-dumbbell"></i>
+                            <div>
+                                <strong>Practice Question</strong>
+                                <p>What's the difference between <code>==</code> and <code>===</code> in JavaScript?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 
-<section class="card-grid">
-    <div class="card">
-        <h2>Knight Code Lab</h2>
-        <p>Explain, debug, review, and generate test cases for your code.</p>
-    </div>
 
-    <div class="card">
-        <h2>Interview Practice</h2>
-        <p>Generate role-based software engineering interview questions.</p>
+<!-- STATS BAR -->
+<div class="lp-stats-bar">
+    <div class="lp-container">
+        <div class="lp-stats-grid">
+            <div class="lp-stat-item">
+                <span class="lp-stat-num" data-target="500">0</span><span class="lp-stat-suffix">+</span>
+                <span class="lp-stat-label">Sessions Run</span>
+            </div>
+            <div class="lp-stat-divider"></div>
+            <div class="lp-stat-item">
+                <span class="lp-stat-num" data-target="3">0</span>
+                <span class="lp-stat-label">AI-Powered Tools</span>
+            </div>
+            <div class="lp-stat-divider"></div>
+            <div class="lp-stat-item">
+                <span class="lp-stat-num" data-target="50">0</span><span class="lp-stat-suffix">+</span>
+                <span class="lp-stat-label">Interview Topics</span>
+            </div>
+            <div class="lp-stat-divider"></div>
+            <div class="lp-stat-item">
+                <span class="lp-stat-num" data-target="100">0</span><span class="lp-stat-suffix">%</span>
+                <span class="lp-stat-label">Free to Start</span>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="card">
-        <h2>Quiz Generator</h2>
-        <p>Create multiple choice quizzes for JavaScript, Node, Express, MongoDB, and more.</p>
+<!-- FEATURE TABS -->
+<section class="lp-section lp-features-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-section-label">What KnightTrace Does</div>
+        <h2 class="lp-section-title">Three tools. One quest.</h2>
+        <p class="lp-section-sub">Everything you need to level up before your next technical interview. All in one place.</p>
+
+        <div class="lp-tabs">
+            <button class="lp-tab active" data-tab="code"><i class="fa-solid fa-code"></i> Code Lab</button>
+            <button class="lp-tab" data-tab="interview"><i class="fa-solid fa-user-tie"></i> Interview Prep</button>
+            <button class="lp-tab" data-tab="quiz"><i class="fa-solid fa-circle-question"></i> Quiz Mode</button>
+        </div>
+
+        <div class="lp-tab-panels">
+            <!-- CODE LAB TAB -->
+            <div class="lp-tab-panel active" id="tab-code">
+                <div class="lp-panel-split">
+                    <div class="lp-panel-text">
+                        <span class="lp-feature-badge code-lab">Code Lab</span>
+                        <h3>Paste code. Get instant AI analysis.</h3>
+                        <p>KnightTrace uses Gemini to explain your code, find bugs, suggest fixes, and generate test cases — all in seconds.</p>
+                        <ul class="lp-feature-list">
+                            <li><i class="fa-solid fa-check"></i> Bug detection & explanation</li>
+                            <li><i class="fa-solid fa-check"></i> Step-by-step code walkthrough</li>
+                            <li><i class="fa-solid fa-check"></i> Auto-generated test cases</li>
+                            <li><i class="fa-solid fa-check"></i> Code improvement suggestions</li>
+                        </ul>
+                        <a href="/users/signup" class="lp-btn lp-btn-primary lp-btn-sm">
+                            Try Code Lab <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="lp-panel-visual">
+                        <div class="lp-mock-editor">
+                            <div class="lp-editor-header">
+                                <span class="lp-dot red"></span>
+                                <span class="lp-dot yellow"></span>
+                                <span class="lp-dot green"></span>
+                                <span style="margin-left:6px">code-review.js</span>
+                            </div>
+                            <pre class="lp-editor-code"><span class="lp-kw">function</span>
+                            <span class="lp-fn">checkAge</span>(<span class="lp-param">age</span>) {
+                            <span class="lp-kw">if</span> (age <span class="lp-op">=</span> <span class="lp-num">18</span>) {
+                            <span class="lp-cmt">// bug</span> <span class="lp-kw">return</span> <span class="lp-str">"adult"</span> }
+                            <span class="lp-kw">return</span> <span class="lp-str">"minor"</span> }</pre>
+                            <div class="lp-editor-result">
+                                <span class="lp-result-badge bug">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Bug on line 2
+                                </span>
+                                <p>Use <code>===</code> not <code>=</code> for comparison</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERVIEW TAB -->
+            <div class="lp-tab-panel" id="tab-interview">
+                <div class="lp-panel-split">
+                    <div class="lp-panel-text">
+                        <span class="lp-feature-badge interview">Interview Prep</span>
+                        <h3>Generate real interview questions.</h3>
+                        <p>Pick a role and topic, and KnightTrace generates challenging software engineering interview questions with hints and sample answers.</p>
+                        <ul class="lp-feature-list">
+                            <li><i class="fa-solid fa-check"></i> Role-based questions (SWE, Frontend, Backend)</li>
+                            <li><i class="fa-solid fa-check"></i> Topic filtering (DS&A, System Design, JS)</li>
+                            <li><i class="fa-solid fa-check"></i> Hidden hints on demand</li>
+                            <li><i class="fa-solid fa-check"></i> Save &amp; revisit sessions</li>
+                        </ul>
+                        <a href="/users/signup" class="lp-btn lp-btn-primary lp-btn-sm">
+                            Try Interview Prep <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="lp-panel-visual">
+                        <div class="lp-mock-card">
+                            <div class="lp-mock-card-header">
+                                <span class="lp-feature-badge interview">Mid-Level SWE</span>
+                                <span class="lp-feature-badge">Data Structures</span>
+                            </div>
+                            <h4>Implement a function to detect a cycle in a linked list.</h4>
+                            <div class="lp-mock-card-actions">
+                                <button class="lp-ghost-btn"><i class="fa-regular fa-lightbulb"></i> Hint</button>
+                                <button class="lp-ghost-btn"><i class="fa-solid fa-eye-slash"></i> Show Answer</button>
+                                <button class="lp-ghost-btn"><i class="fa-solid fa-forward-step"></i> Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="lp-tab-panel" id="tab-quiz">
+                <div class="lp-panel-split">
+                    <div class="lp-panel-text">
+                        <span class="lp-feature-badge quiz">Quiz Mode</span>
+                        <h3>Challenge yourself with timed quizzes.</h3>
+                        <p>Generate multiple-choice quizzes on JavaScript, Node.js, Express, MongoDB, and more. Track your score and review every answer.</p>
+                        <ul class="lp-feature-list">
+                            <li><i class="fa-solid fa-check"></i> 10–20 question sets</li>
+                            <li><i class="fa-solid fa-check"></i> Instant score + detailed results</li>
+                            <li><i class="fa-solid fa-check"></i> Topic &amp; difficulty selection</li>
+                            <li><i class="fa-solid fa-check"></i> Saved quiz history</li>
+                        </ul>
+                        <a href="/users/signup" class="lp-btn lp-btn-primary lp-btn-sm">
+                            Take a Quiz <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="lp-panel-visual">
+                        <div class="lp-mock-quiz">
+                            <div class="lp-quiz-progress">
+                                <div class="lp-quiz-bar" style="width:40%"></div>
+                            </div>
+                            <p class="lp-quiz-q">Q4 / 10 — Which method removes the last element from an array?</p>
+                            <div class="lp-quiz-options">
+                                <div class="lp-quiz-opt">A. <code>shift()</code></div>
+                                <div class="lp-quiz-opt lp-opt-correct">B. <code>pop()</code> Correct</div>
+                                <div class="lp-quiz-opt">C. <code>splice()</code></div>
+                                <div class="lp-quiz-opt">D. <code>slice()</code></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
+
+<!-- BEFORE / AFTER CODE PANEL -->
+<section class="lp-section lp-ba-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-section-label">The KnightTrace Effect</div>
+        <h2 class="lp-section-title">See the difference instantly.</h2>
+        <p class="lp-section-sub">Before: you stare at a bug alone. After: you understand it, fix it, and never make it again.</p>
+
+        <div class="lp-ba-panels">
+            <div class="lp-ba-card lp-ba-before">
+                <div class="lp-ba-label">Before KnightTrace</div>
+                <pre class="lp-ba-code"><span class="lp-cmt">// Your code with a hidden bug…</span>
+                <span class="lp-kw">async function</span> <span class="lp-fn">fetchData</span>() {
+                <span class="lp-kw">const</span> res  = <span class="lp-kw">await</span> fetch(<span class="lp-str">"/api/data"</span>)
+                <span class="lp-kw">const</span> data = res.json()   <span class="lp-cmt">// silent bug</span>
+                <span class="lp-kw">return</span> data }</pre>
+                <div class="lp-ba-status error">
+                    <i class="fa-solid fa-circle-xmark"></i> Silently fails — returns a Promise object, not the data
+                </div>
+            </div>
+
+            <div class="lp-ba-arrow">
+                <i class="fa-solid fa-arrow-right-long"></i>
+            </div>
+
+            <div class="lp-ba-card lp-ba-after">
+                <div class="lp-ba-label after">After KnightTrace</div>
+                <pre class="lp-ba-code"><span class="lp-cmt">// Fixed + explained by AI</span>
+                <span class="lp-kw">async function</span> <span class="lp-fn">fetchData</span>() {
+                <span class="lp-kw">const</span> res  = <span class="lp-kw">await</span> fetch(<span class="lp-str">"/api/data"</span>)
+                <span class="lp-kw">const</span> data = <span class="lp-kw">await</span> res.json()  <span class="lp-cmt">// fixed</span>
+                <span class="lp-kw">return</span> data }</pre>
+                <div class="lp-ba-status success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <code>res.json()</code> returns a Promise, you must <code>await</code> it
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS SECTION -->
+<section class="lp-section lp-steps-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-section-label">How It Works</div>
+        <h2 class="lp-section-title">Three steps to mastery.</h2>
+
+        <div class="lp-steps-grid">
+            <div class="lp-step-card">
+                <div class="lp-step-num">01</div>
+                <div class="lp-step-icon"><i class="fa-solid fa-right-to-bracket"></i></div>
+                <h3>Sign Up Free</h3>
+                <p>Create your account in seconds. No credit card. No setup. Just you and the code.</p>
+            </div>
+
+            <div class="lp-step-connector"></div>
+
+            <div class="lp-step-card">
+                <div class="lp-step-num">02</div>
+                <div class="lp-step-icon"><i class="fa-solid fa-code"></i></div>
+                <h3>Paste or Choose</h3>
+                <p>Drop in your code, start an interview session, or launch a quiz. Pick your quest.</p>
+            </div>
+
+            <div class="lp-step-connector"></div>
+
+            <div class="lp-step-card">
+                <div class="lp-step-num">03</div>
+                <div class="lp-step-icon"><i class="fa-solid fa-brain"></i></div>
+                <h3>Trace &amp; Learn</h3>
+                <p>Gemini AI analyzes your input, explains bugs, generates questions, and saves your progress.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION: ASK → TRACE → LEARN PILLARS -->
+<section class="lp-section lp-pillars-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-section-label">The Framework</div>
+        <h2 class="lp-section-title">ASK. TRACE. LEARN.</h2>
+        <p class="lp-section-sub">A simple loop that turns confusion into confidence — every single session.</p>
+
+        <div class="lp-pillars">
+            <div class="lp-pillar ask">
+                <div class="lp-pillar-icon"><i class="fa-solid fa-message"></i></div>
+                <div class="lp-pillar-label">ASK</div>
+                <h3>Paste your code or choose a topic</h3>
+                <p>Start with a question, a broken function, or a concept you want to master. No limits on what you bring.</p>
+            </div>
+            <div class="lp-pillar trace">
+                <div class="lp-pillar-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="lp-pillar-label">TRACE</div>
+                <h3>Gemini finds bugs and explains the logic</h3>
+                <p>AI traces through your code line by line, spotting errors and explaining the why behind each one.</p>
+            </div>
+            <div class="lp-pillar learn">
+                <div class="lp-pillar-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="lp-pillar-label">LEARN</div>
+                <h3>Save your notes and practice again</h3>
+                <p>Every session is saved. Review your history, favorite key insights, and track your growth over time.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUEST CHECKLIST -->
+<section class="lp-section lp-quest-section reveal-section">
+    <div class="lp-container lp-quest-layout">
+        <div class="lp-quest-text">
+            <div class="lp-section-label">Your Path</div>
+            <h2 class="lp-section-title">Your Coding Quest.</h2>
+            <p>Level up step by step. Every bug you fix and every question you answer brings you closer to interview-ready.</p>
+            <a href="/users/signup" class="lp-btn lp-btn-primary">
+                <i class="fa-solid fa-chess-knight"></i> Start Your Quest
+            </a>
+        </div>
+
+        <div class="lp-quest-card">
+            <div class="lp-quest-header">
+                <i class="fa-solid fa-chess-knight"></i> KnightTrace Quest
+            </div>
+            <div class="lp-quest-list">
+                <div class="lp-quest-item done">
+                    <i class="fa-solid fa-circle-check"></i> Create your account
+                </div>
+                <div class="lp-quest-item done">
+                    <i class="fa-solid fa-circle-check"></i> Run your first code review
+                </div>
+                <div class="lp-quest-item done">
+                    <i class="fa-solid fa-circle-check"></i> Fix a bug with AI help
+                </div>
+                <div class="lp-quest-item pending">
+                    <i class="fa-regular fa-circle"></i> Complete an interview session
+                </div>
+                <div class="lp-quest-item pending">
+                    <i class="fa-regular fa-circle"></i> Score 8/10 on a quiz
+                </div>
+                <div class="lp-quest-item pending">
+                    <i class="fa-regular fa-circle"></i> Review 5 saved sessions
+                </div>
+                <div class="lp-quest-item locked">
+                    <i class="fa-solid fa-lock"></i>
+                    <span class="lp-locked-text">Unlock: Interview Champion</span>
+                </div>
+            </div>
+            <div class="lp-quest-progress-bar">
+                <div class="lp-quest-progress-fill"></div>
+            </div>
+            <div class="lp-quest-progress-label">Quest Progress: 43%</div>
+        </div>
+    </div>
+</section>
+
+<!-- TECH STACK MARQUEE -->
+<div class="lp-marquee-section">
+    <div class="lp-marquee-label">Built With</div>
+    <div class="lp-marquee-track">
+        <div class="lp-marquee-inner">
+            <span>Node.js</span><span>Express</span><span>MongoDB</span>
+            <span>Passport.js</span><span>Gemini API</span><span>EJS</span>
+            <span>JavaScript</span><span>CSS3</span><span>Font Awesome</span>
+            <!-- duplicate for seamless loop -->
+            <span>Node.js</span><span>Express</span><span>MongoDB</span>
+            <span>Passport.js</span><span>Gemini API</span><span>EJS</span>
+            <span>JavaScript</span><span>CSS3</span><span>Font Awesome</span>
+        </div>
+    </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<section class="lp-section lp-compare-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-section-label">Why KnightTrace</div>
+        <h2 class="lp-section-title">The smarter way to prep.</h2>
+        <p class="lp-section-sub">Stop guessing. Start understanding. Here's what changes when you use KnightTrace.</p>
+
+        <div class="lp-compare-table">
+            <div class="lp-compare-col lp-compare-without">
+                <div class="lp-compare-header">
+                    <i class="fa-solid fa-circle-xmark"></i> Without KnightTrace
+                </div>
+                <div class="lp-compare-row"><i class="fa-solid fa-xmark"></i> Stare at an error for hours</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-xmark"></i> Copy random fixes from Stack Overflow</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-xmark"></i> Guess at interview questions</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-xmark"></i> Notes scattered everywhere</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-xmark"></i> Practice blindly, hope for the best</div>
+            </div>
+            <div class="lp-compare-col lp-compare-with">
+                <div class="lp-compare-header"><i class="fa-solid fa-chess-knight"></i> With KnightTrace</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-check"></i> AI explains exactly what went wrong</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-check"></i> Understand the fix, not just copy it</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-check"></i> AI generates role-specific questions</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-check"></i> All sessions saved and searchable</div>
+                <div class="lp-compare-row"><i class="fa-solid fa-check"></i> Guided learning path, tracked progress</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 10 — FINAL CTA -->
+<section class="lp-section lp-cta-section reveal-section">
+    <div class="lp-container">
+        <div class="lp-cta-card">
+            <div class="lp-cta-glow"></div>
+            <div class="lp-section-label">Ready to Begin?</div>
+            <h2 class="lp-cta-h2">Your first review is one click away.</h2>
+            <p>Join developers who are debugging faster, practicing smarter, and walking into interviews with confidence.</p>
+            <div class="lp-cta-btns">
+                <a href="/users/signup" class="lp-btn lp-btn-primary lp-btn-lg"><i class="fa-solid fa-chess-knight"></i> Get Started Free</a>
+                <a href="/users/signin" class="lp-btn lp-btn-ghost">Already have an account? Sign In</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LANDING PAGE JAVASCRIPT -->
+<script>
+(function () {
+
+/* ---- 1. AI TYPING DEMO ---- */
+var panel   = document.getElementById('lp-code-panel');
+var cursor  = document.getElementById('lp-cursor');
+var anaBar  = document.getElementById('lp-analysis-bar');
+var results = document.getElementById('lp-ai-results');
+var items   = results ? results.querySelectorAll('.lp-result-item') : [];
+
+var plainLines = [
+    'function getUser(id) {',
+    '  if (id = null) {',
+    '    return false',
+    '  }',
+    '  return db.find(id)',
+    '}'
+];
+
+var colorLines = [
+    '<span class="lp-kw">function</span> <span class="lp-fn">getUser</span>(<span class="lp-param">id</span>) {',
+    '  <span class="lp-kw">if</span> (<span class="lp-param">id</span> <span class="lp-op">=</span> <span class="lp-kw">null</span>) {',
+    '    <span class="lp-kw">return</span> <span class="lp-num">false</span>',
+    '  }',
+    '  <span class="lp-kw">return</span> <span class="lp-fn">db</span>.<span class="lp-fn">find</span>(<span class="lp-param">id</span>)',
+    '}'
+];
+
+var lineEls = [];
+
+function typeLine(idx, done) {
+    if (idx >= plainLines.length) { done && done(); return; }
+    var el = document.createElement('div');
+    el.style.minHeight = '1.75em';
+    panel.insertBefore(el, cursor);
+    lineEls.push(el);
+    var plain = plainLines[idx];
+    var ci = 0;
+    var iv = setInterval(function () {
+        ci++;
+        el.textContent = plain.slice(0, ci);
+        if (ci >= plain.length) {
+            clearInterval(iv);
+            el.innerHTML = colorLines[idx];
+            setTimeout(function () { typeLine(idx + 1, done); }, 60);
+        }
+    }, 28 + Math.random() * 18);
+}
+
+function showResults() {
+    anaBar.style.display = 'none';
+    results.style.display = 'flex';
+    items.forEach(function (item, i) {
+        setTimeout(function () {
+            item.style.transition = 'opacity .4s ease, transform .4s ease';
+            item.style.transform  = 'translateY(10px)';
+            item.style.opacity    = '0';
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    item.style.opacity   = '1';
+                    item.style.transform = 'translateY(0)';
+                });
+            });
+        }, i * 200);
+    });
+}
+
+function runDemo() {
+    // reset
+    lineEls.forEach(function (el) { el.remove(); });
+    lineEls.length = 0;
+    cursor.style.display = 'inline';
+    anaBar.style.display  = 'none';
+    results.style.display = 'none';
+    items.forEach(function (item) { item.style.opacity = '0'; item.style.transform = ''; item.style.transition = ''; });
+
+    setTimeout(function () {
+        typeLine(0, function () {
+            cursor.style.display = 'none';
+            setTimeout(function () {
+                anaBar.style.display = 'flex';
+                setTimeout(function () {
+                    showResults();
+                    // loop again after 7s pause
+                    setTimeout(runDemo, 7000);
+                }, 2200);
+            }, 500);
+        });
+    }, 600);
+}
+
+if (panel && cursor) runDemo();
+
+/* ---- 2. FEATURE TABS ---- */
+document.querySelectorAll('.lp-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+        document.querySelectorAll('.lp-tab').forEach(function (t) { t.classList.remove('active'); });
+        document.querySelectorAll('.lp-tab-panel').forEach(function (p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        var panel = document.getElementById('tab-' + tab.dataset.tab);
+        if (panel) panel.classList.add('active');
+    });
+});
+
+/* ---- 3. STAT COUNTERS ---- */
+function animateCounter(el) {
+    var target = parseInt(el.dataset.target, 10);
+    var start  = performance.now();
+    var dur    = 1400;
+    (function tick(now) {
+        var p = Math.min((now - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.floor(eased * target);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = target;
+    })(start);
+}
+
+/* ---- 4. INTERSECTION OBSERVER (scroll reveals, counters) ---- */
+var revealObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+        if (e.isIntersecting) e.target.classList.add('revealed');
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal-section').forEach(function (s) { revealObs.observe(s); });
+
+var counterObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+        if (e.isIntersecting) {
+            animateCounter(e.target);
+            counterObs.unobserve(e.target);
+        }
+    });
+}, { threshold: 0.6 });
+
+document.querySelectorAll('.lp-stat-num').forEach(function (el) { counterObs.observe(el); });
+
+})();
+</script>
 
 <%- include("partials/footer") %>

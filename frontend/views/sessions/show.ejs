@@ -1,49 +1,120 @@
 <%- include("../partials/header") %>
 
 <section class="page-title">
-    <h1><%= savedSession.title %></h1>
-    <p><%= savedSession.type %></p>
+    <h1><%= item.title %></h1>
+    <p><%= item.type %></p>
 </section>
 
-<section class="card">
-    <h2>Original Input</h2>
-    <pre class="code-output"><%= savedSession.userInput %></pre>
-</section>
+<% if (item.type === "code-lab") { %>
+    <section class="card">
+        <h2>Original Input</h2>
+        <pre class="code-output"><%= item.userInput %></pre>
+    </section>
 
-<section class="card">
-    <h2>AI Result</h2>
+    <section class="card">
+        <details open><summary>Summary</summary><p><%= item.aiResponse.summary %></p></details>
+        <details><summary>Issues</summary><ul><% item.aiResponse.issues.forEach(function (x) { %><li><%= x %></li><% }) %></ul></details>
+        <details><summary>Improvements</summary><ul><% item.aiResponse.improvements.forEach(function (x) { %><li><%= x %></li><% }) %></ul></details>
+        <details><summary>Complexity</summary><p>Time: <%= item.aiResponse.timeComplexity %></p><p>Space: <%= item.aiResponse.spaceComplexity %></p></details>
+        <details><summary>Corrected Code</summary><pre class="code-output"><%= item.aiResponse.correctedCode %></pre></details>
+    </section>
+<% } %>
 
-    <h3>Summary</h3>
-    <p><%= savedSession.aiResponse.summary %></p>
+<!-- show the pinned questions at the top -->
+<% if (item.type === "interview") {
+    var pins = item.pinnedQuestions || [];
+    var ordered = [];
 
-    <h3>Issues</h3>
-    <ul>
-        <% savedSession.aiResponse.issues.forEach(function (item) { %>
-            <li><%= item %></li>
+    pins.forEach(function (pinIndex) {
+        if (item.aiResponse.questions[pinIndex]) {
+           ordered.push({
+              originalIndex: pinIndex,
+              question: item.aiResponse.questions[pinIndex],
+              pinned: true
+           });
+        }
+    });
+
+    item.aiResponse.questions.forEach(function (question, index) {
+        if (!pins.includes(index)) {
+            ordered.push({
+                originalIndex: index,
+                question: question,
+                pinned: false
+            });
+        }
+    });
+%>
+    <section class="card">
+        <h2>Interview Details</h2>
+        <p><strong>Role:</strong> <%= item.role %></p>
+        <p><strong>Level:</strong> <%= item.level %></p>
+        <p><strong>Topics:</strong> <%= item.topics %></p>
+        <p><strong>Difficulty:</strong> <%= item.difficulty %></p>
+    </section>
+
+    <section class="card">
+        <% ordered.forEach(function (entry) {
+            var q = entry.question;
+            var originalIndex = entry.originalIndex;
+            var isPinned = entry.pinned;
+        %>
+            <div class="question-card <%= isPinned ? "pinned-question" : "" %>">
+                <h3>
+                    <% if (isPinned) { %> <i class="fa-solid fa-thumbtack"></i><% } %>
+                    Question <%= originalIndex + 1 %>: <%= q.question %>
+                </h3>
+
+                 <div class="question-actions">
+                     <button type="button" onclick="toggleBox('hint-<%= originalIndex %>', this, 'hint')" class="toggle-hint">
+                          <i class="fa-regular fa-lightbulb"></i><span>Hint</span>
+                     </button>
+
+                     <button type="button" onclick="toggleBox('answer-<%= originalIndex %>', this, 'answer')" class="toggle-answer">
+                          <i class="fa-solid fa-eye-slash"></i><span>Show Answer</span>
+                     </button>
+
+                     <form action="/interviews/<%= item._id %>/pin/<%= originalIndex %>" method="POST">
+                         <button type="submit">
+                             <i class="fa-solid fa-thumbtack"></i><%= isPinned ? "Unpin" : "Pin" %>
+                         </button>
+                     </form>
+                 </div>
+
+                 <div id="hint-<%= originalIndex %>" class="hidden answer-box">
+                    <p><strong>Hint:</strong> <%= q.hint %></p>
+                 </div>
+
+                <div id="answer-<%= originalIndex %>" class="hidden answer-box">
+                    <p><strong>Ideal Answer:</strong></p>
+                    <pre class="answer-code"><%= q.idealAnswer %></pre>
+                    <% if (q.followUp) { %> <p><strong>Follow Up:</strong> <%= q.followUp %></p><% } %>
+                </div>
+            </div>
         <% }) %>
-    </ul>
+    </section>
 
-    <h3>Improvements</h3>
-    <ul>
-        <% savedSession.aiResponse.improvements.forEach(function (item) { %>
-            <li><%= item %></li>
-        <% }) %>
-    </ul>
+<% } %>
 
-    <h3>Complexity</h3>
-    <p>Time: <%= savedSession.aiResponse.timeComplexity %></p>
-    <p>Space: <%= savedSession.aiResponse.spaceComplexity %></p>
+<% if (item.type === "quiz") { %>
+    <section class="card">
+        <h2>Quiz Score</h2>
+        <p><%= item.score === null ? "Not completed yet" : item.score + " / " + item.questions.length %></p>
 
-    <h3>Corrected Code</h3>
-    <pre class="code-output"><%= savedSession.aiResponse.correctedCode %></pre>
-</section>
+        <% if (item.score !== null) { %>
+           <a class="button secondary" href="/quizzes/<%= item._id %>/result">View Result</a>
+        <% } else { %>
+           <a class="button secondary" href="/quizzes/<%= item._id %>/take">Take Quiz</a>
+        <% } %>
+    </section>
+<% } %>
 
 <section class="card">
     <h2>Your Notes</h2>
-    <p><%= savedSession.userNotes || "No notes added." %></p>
+    <p><%= item.userNotes || "No notes added." %></p>
 
     <div class="button-row">
-        <a class="button secondary" href="/sessions/<%= savedSession._id %>/edit">Edit</a>
+        <a class="button secondary" href="/sessions/<%= item.type === "code-lab" ? "code" : item.type %>/<%= item._id %>/edit">Edit</a>
         <a class="button secondary" href="/sessions">Back</a>
     </div>
 </section>

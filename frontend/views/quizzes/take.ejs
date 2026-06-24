@@ -1,0 +1,27 @@
+<!-- This page is for taking the quizzes -->
+<%- include("../partials/header") %>
+
+<section class="page-title">
+    <h1><%= quiz.title %></h1>
+    <p><%= quiz.topic %> • <%= quiz.difficulty %></p>
+</section>
+
+<form action="/quizzes/<%= quiz._id %>/submit" method="POST">
+    <% quiz.questions.forEach(function (q, i) { %>
+        <section class="card">
+            <h2>Question <%= i + 1 %></h2>
+            <p><%= q.question %></p>
+
+            <% q.options.forEach(function (option) { %>
+                <label class="option-card">
+                    <input type="radio" name="q<%= i %>" value="<%= option %>" required>
+                    <%= option %>
+                </label>
+            <% }) %>
+        </section>
+    <% }) %>
+
+    <button type="submit">Submit Quiz</button>
+</form>
+
+<%- include("../partials/footer") %>

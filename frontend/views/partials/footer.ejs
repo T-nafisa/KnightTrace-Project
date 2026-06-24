@@ -1,15 +1,14 @@
 </main>
 
+<!-- Site footer divided in 3 parts: logo, quick links, contact -->
 <footer class="site-footer">
     <div class="footer-main">
 
         <!-- On the Left- Brand -->
         <div class="footer-brand">
-            <div class="footer-logo-box">
-                <i class="fa-solid fa-code"></i>  <!-- will change with own logo later-->
-            </div>
-
-            <h2>KnightTrace</h2>
+            <img src="/images/logo.png" class="footer-logo" alt="KnightTrace"
+                 onerror="this.remove();document.getElementById('footer-brand-fallback').hidden=false;">
+            <h2 id="footer-brand-fallback" hidden>KnightTrace</h2>
             <p>The ultimate prep quad for coding, debugging, interviews, and quizzes.</p>
             <p class="made-by">Built by Nafisa Tabassum.</p>
         </div>
@@ -21,7 +20,7 @@
               <a href="/code"><i class="fa-solid fa-code"></i>Code Lab</a>
               <a href="/interviews/new"><i class="fa-solid fa-user-tie"></i>Interview</a>
               <a href="/quizzes/new"><i class="fa-solid fa-circle-question"></i>Quiz</a>
-              <a href="/sessions"><i class="fa-solid fa-clock-rotate-left"></i>History</a>
+              <a href="/sessions"><i class="fa-solid fa-clock-rotate-left"></i>Session History</a>
         </div>
 
         <!-- Right- Contact -->

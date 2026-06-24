@@ -1,0 +1,50 @@
+<%- include("../partials/header") %>
+
+<%
+    var total = quiz.questions.length;
+    var score = quiz.score || 0;
+    var percent = total ? Math.round((score / total) * 100) : 0;
+    var weak = [];
+    quiz.questions.forEach(function (q, i) {
+        if (quiz.userAnswers[i] !== q.correctAnswer && q.weakTopic && !weak.includes(q.weakTopic)) weak.push(q.weakTopic);
+    });
+%>
+
+<section class="page-title">
+    <span class="eyebrow"><i class="fa-solid fa-circle-question"></i> Quiz Result</span>
+    <h1><%= quiz.title %></h1>
+    <p>You scored <strong><%= score %> / <%= total %></strong> (<%= percent %>%).</p>
+</section>
+
+<section class="card result-summary-card">
+    <div><h2><%= percent %>%</h2><p>Final Score</p></div>
+    <div><h2><%= score %></h2><p>Correct</p></div>
+    <div><h2><%= total - score %></h2><p>Review Needed</p></div>
+</section>
+
+<% if (weak.length) { %>
+    <section class="card">
+        <h2>Weak Topics</h2>
+        <p><%= weak.join(", ") %></p>
+    </section>
+<% } %>
+
+<% quiz.questions.forEach(function (q, i) {
+    var correct = quiz.userAnswers[i] === q.correctAnswer;
+%>
+    <section class="card result-question <%= correct ? "correct" : "wrong" %>">
+        <span class="badge <%= correct ? "success" : "danger" %>"><%= correct ? "Correct" : "Review" %></span>
+        <h2>Question <%= i + 1 %></h2>
+        <p><%= q.question %></p>
+        <p><strong>Your Answer:</strong> <%= quiz.userAnswers[i] || "No answer" %></p>
+        <p><strong>Correct Answer:</strong> <%= q.correctAnswer %></p>
+        <p><strong>Explanation:</strong> <%= q.explanation %></p>
+    </section>
+<% }) %>
+
+<div class="button-row">
+    <a class="button primary" href="/quizzes/new">Create Another Quiz</a>
+    <a class="button secondary" href="/sessions">View Saved Session History</a>
+</div>
+
+<%- include("../partials/footer") %>

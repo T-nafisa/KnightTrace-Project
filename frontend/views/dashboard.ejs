@@ -1,30 +1,43 @@
+<!-- After logging in, this is the main homepage/ dashboard that shows -->
 <%- include("partials/header") %>
 
 <section class="page-title">
-    <h1>Dashboard</h1>
-    <p>Welcome back, <%= currentUser.username %>.</p>
+    <h1>Welcome back, <%= currentUser.username %></h1>
+    <p>Track your coding practice, interviews, quizzes, and saved practice sessions.</p>
+</section>
+
+<section class="stat-grid">
+    <div class="card"><h2><%= stats.sessions %></h2><p>Your Saved Sessions</p></div>
+    <div class="card"><h2><%= stats.favorites %></h2><p>Favorited Sessions</p></div>
+    <div class="card"><h2><%= stats.quizzes %></h2><p>Quizzes Completed</p></div>
 </section>
 
 <section class="card-grid">
-    <a class="card link-card" href="/code">
-        <h2>Knight Code Lab</h2>
-        <p>Explain, debug, review, and generate test cases.</p>
-    </a>
-
-    <a class="card link-card" href="/interviews/new">
-        <h2>Interview Practice</h2>
-        <p>Practice live behavioral and highly technical code sprints inspired by big tech interviews.</p>
-    </a>
-
-    <a class="card link-card" href="/quizzes/new">
-        <h2>Quiz Generator</h2>
-        <p>Generate MCQ quizzes from any tech topic.</p>
-    </a>
-
-    <a class="card link-card" href="/sessions">
-        <h2>Saved History</h2>
-        <p>Review your saved Practice sessions and notes.</p>
-    </a>
+    <a class="card link-card" href="/code"><h2>Code Lab</h2><p>Explain, debug, review, improve, and test code.</p></a>
+    <a class="card link-card" href="/interviews/new"><h2>Interview Practice</h2><p>Generate role-based technical interview questions.</p></a>
+    <a class="card link-card" href="/quizzes/new"><h2>Quiz Practice</h2><p>Create MCQ quizzes from any tech topic.</p></a>
+    <a class="card link-card" href="/sessions"><h2>Saved Session History</h2><p>Review, edit, favorite, or delete saved work.</p></a>
 </section>
+
+<section class="page-title small-title">
+    <h2>Recent Activity</h2>
+</section>
+
+<% if (recent.length === 0) { %>
+    <section class="card empty-state">
+        <h2>No sessions yet</h2>
+        <p>Start with Code Lab, Interview Practice, or Quiz Practice.</p>
+        <a class="button secondary" href="/code">Open Code Lab</a>
+    </section>
+<% } else { %>
+    <section class="card-list">
+        <% recent.forEach(function (item) { %>
+            <a class="card list-card" href="/sessions/<%= item.type === "code-lab" ? "code" : item.type %>/<%= item._id %>">
+                <h3><%= item.title %></h3>
+                <p><%= item.type %> • <%= item.topic || item.language || item.role || "General" %></p>
+            </a>
+        <% }) %>
+    </section>
+<% } %>
 
 <%- include("partials/footer") %>

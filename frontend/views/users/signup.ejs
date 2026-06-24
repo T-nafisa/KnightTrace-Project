@@ -10,16 +10,30 @@
 
     <form action="/users/signup/submit" method="POST">
         <label for="username">Username</label>
-        <input type="text" name="username" id="username" required>
+        <input type="text" name="username" id="username" placeholder="Enter your name" required>
 
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" required>
+        <input type="email" name="email" id="email" placeholder="Enter your email" required>
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" required>
+        <input type="password" name="password" id="password" placeholder="Enter at least 6 characters" minlength="6" required>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Re-enter your password" minlength="6" required>
 
         <button type="submit">Sign Up</button>
     </form>
+
+    <div class="oauth-box">
+        <p>Or Alternative Options: </p>
+
+        <a class="button secondary full-width oauth-login" href="/auth/google">
+            <img src="/images/Google_logo.svg" alt="Google logo">
+             <span>Continue with Google</span></a>
+        <a class="button secondary full-width oauth-login" href="/auth/github">
+            <img src="/images/GitHub_logo.svg" alt="GitHub logo">
+            <span>Continue with GitHub</span></a>
+    </div>
 
     <p class="small-text">
         Already have an account?

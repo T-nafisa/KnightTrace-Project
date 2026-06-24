@@ -2,26 +2,34 @@
 <html>
 <head>
     <title><%= title %> | KnightTrace</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 <header class="site-header">
     <div class="brand">
-        <a href="/">KnightTrace</a>
+       <a href="/" class="brand-title">
+           <img src="/images/logo.png" class="brand-logo" alt="KnightTrace"
+                onerror="this.remove();document.getElementById('brand-fallback').hidden=false;">
+           <span id="brand-fallback" hidden><span class="brand-knight">Knight</span><span class="brand-trace">Trace</span></span>
+       </a>
         <span>Enter the ultimate code quad to crush bugs and master your favorite languages</span>
     </div>
 
+ <!-- Navigation links change based on login status. -->
     <nav class="nav-links">
         <% if (isLoggedIn) { %>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/code">Code Lab</a>
-            <a href="/interviews/new">Interview</a>
-            <a href="/quizzes/new">Quiz</a>
-            <a href="/sessions">History</a>
+            <!-- Adds active class to highlight the current page. -->
+            <a class="<%= currentPath === "/dashboard" ? "active" : "" %>" href="/dashboard">Dashboard</a>
+            <a class="<%= currentPath.startsWith("/code") ? "active" : "" %>" href="/code">Code Lab</a>
+            <a class="<%= currentPath.startsWith("/interviews") ? "active" : "" %>" href="/interviews/new">Interview</a>
+            <a class="<%= currentPath.startsWith("/quizzes") ? "active" : "" %>" href="/quizzes/new">Quiz</a>
+            <a class="<%= currentPath.startsWith("/sessions") ? "active" : "" %>" href="/sessions">Session History</a>
+            <span class="profile-pill"><i class="fa-solid fa-circle-user"></i> <%= currentUser.username %></span>
             <a href="/users/logout">Logout</a>
         <% } else { %>
-            <a href="/">Home</a>
+            <a class="<%= currentPath === "/" ? "active" : "" %>" href="/">Home</a>
             <a href="/users/signin">Sign In</a>
             <a href="/users/signup">Sign Up</a>
         <% } %>

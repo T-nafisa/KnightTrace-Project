@@ -1,12 +1,44 @@
+<!-- This page is for generating new quizzes -->
 <%- include("../partials/header") %>
 
 <section class="page-title">
     <h1>Quiz Generator</h1>
-    <p>Create multiple choice quizzes from any tech topic.</p>
+    <p>Generate multiple choice quizzes from any tech topic.</p>
 </section>
 
 <section class="card">
-    <p>This page is connected. Quiz generator logic will be added later.</p>
+    <% if (error) { %><p class="error-message"><%= error %></p><% } %>
+
+    <form action="/quizzes/create" method="POST">
+        <label>Choose Topic</label>
+        <select name="topic">
+            <option value="" selected disabled>Select a topic</option>
+            <% topics.forEach(function (topic) { %>
+                <option value="<%= topic %>" <%= formData.topic === topic ? "selected" : "" %>><%= topic %></option>
+            <% }) %>
+        </select>
+
+        <label>Or enter your topic</label>
+        <input type="text" name="customTopic" value="<%= formData.customTopic || "" %>" placeholder="Example: Express middleware">
+
+        <label>Difficulty</label>
+        <select name="difficulty" required>
+            <option value="" selected disabled>Select difficulty</option>
+            <% difficulties.forEach(function (d) { %>
+                <option value="<%= d %>" <%= formData.difficulty === d ? "selected" : "" %>><%= d %></option>
+            <% }) %>
+        </select>
+
+        <label>Number of Questions</label>
+        <select name="count" required>
+            <option value="" selected disabled>Select question count</option>
+            <% counts.forEach(function (c) { %>
+                <option value="<%= c %>" <%= formData.count == c ? "selected" : "" %>><%= c %> questions</option>
+            <% }) %>
+        </select>
+
+        <button type="submit">Generate Quiz</button>
+    </form>
 </section>
 
 <%- include("../partials/footer") %>

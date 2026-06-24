@@ -1,3 +1,6 @@
+// OAuth routes
+// Used Passport for Google and GitHub login. Made blockage if keys are missing.
+
 var express = require("express");
 var router = express.Router();
 var passport = require("passport");

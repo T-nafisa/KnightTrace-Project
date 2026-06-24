@@ -2,16 +2,16 @@
 
 <section class="page-title">
     <h1>Edit Session</h1>
-    <p>Update the title or notes for this saved session.</p>
+    <p>Update title or notes.</p>
 </section>
 
 <section class="card">
-    <form action="/sessions/<%= savedSession._id %>/update" method="POST">
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" value="<%= savedSession.title %>" required>
+    <form action="/sessions/<%= item.type === "code-lab" ? "code" : item.type %>/<%= item._id %>/update" method="POST">
+        <label>Title</label>
+        <input type="text" name="title" value="<%= item.title %>" required>
 
-        <label for="userNotes">Notes</label>
-        <textarea name="userNotes" id="userNotes" rows="8"><%= savedSession.userNotes || "" %></textarea>
+        <label>Notes</label>
+        <textarea name="userNotes" rows="8"><%= item.userNotes || "" %></textarea>
 
         <button type="submit">Save Changes</button>
     </form>

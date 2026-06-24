@@ -1,3 +1,5 @@
+// User auth routes to signup, signin (local + passport), and logout
+
 var express = require('express');
 var router = express.Router();
 var passport = require("passport");
@@ -25,10 +27,27 @@ router.post("/signup/submit", async function (req, res) {
         var username = req.body.username;
         var email = req.body.email;
         var password = req.body.password;
+        var confirmPassword = req.body.confirmPassword;
 
-        if (!username || !email || !password) {
+        if (!username || !email || !password || !confirmPassword) {
             res.render("users/signup", {
                 title: "Sign Up", error: "Please fill out all fields."
+            });
+            return;
+        }
+
+        if (password.length <6) {
+            res.render("users/signup", {
+                title: "Sign Up",
+                error: "Password must be at least 6 characters."
+            })
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            res.render("users/signup", {
+                title: "Sign Up",
+                error: "Passwords do not match."
             });
             return;
         }
@@ -93,9 +112,7 @@ router.post("/signin/submit", function (req, res, next) {
             return;
         }
         req.logIn(user, function (error) {
-            if (error) {
-                return next(error);
-            }
+            if (error) return next(error);
             res.redirect("/dashboard");
         });
     })(req, res, next);
@@ -104,9 +121,7 @@ router.post("/signin/submit", function (req, res, next) {
 /* GET logout */
 router.get("/logout", function (req, res, next) {
     req.logout(function (error) {
-        if (error) {
-            return next(error);
-        }
+        if (error) return next(error);
         res.redirect("/");
     });
 });

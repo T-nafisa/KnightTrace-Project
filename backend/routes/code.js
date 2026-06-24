@@ -1,115 +1,47 @@
+// Code Lab routes to show the lab page and submit code to Gemini for analysis
+
 var express = require("express");
 var router = express.Router();
-var axios = require("axios");
 
 var { getCollection } = require("../models/db");
+var { ensureAuthenticated } = require("../utils/auth");
+var { askGemini } = require("../utils/gemini");
+var { buildCodePrompt } = require("../utils/prompts");
+var { languages } = require("../utils/options");
 
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/users/signin");
+function pageData(result, savedId, error, formData) {
+    return { title: "Knight Code Lab", languages, result, savedId, error, formData: formData || {} };
 }
 
-function cleanJson(text) {
-    return text
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
+function cleanResult(result) {
+    result = result || {};
+    result.issues = Array.isArray(result.issues) ? result.issues : [];
+    result.improvements = Array.isArray(result.improvements) ? result.improvements : [];
+    result.testCases = Array.isArray(result.testCases) ? result.testCases : [];
+    return result;
 }
 
 router.get("/", ensureAuthenticated, function (req, res) {
-    res.render("code/lab", {
-        title: "Knight Code Lab",
-        result: null,
-        error: null,
-        formData: {}
-    });
+    res.render("code/lab", pageData(null, null, null, {}));
 });
 
 router.post("/analyze", ensureAuthenticated, async function (req, res) {
     try {
-        var actionType = req.body.actionType;
-        var language = req.body.language;
+        var data = req.body;
 
-        var codeText = req.body.codeText;
+        if (!data.actionType || !data.language || !data.codeText)
+            throw new Error("Please fill out all fields.");
 
-        if (!actionType || !language || !codeText) {
-            res.render("code/lab", {
-                title: "Knight Code Lab",
-                result: null,
-                error: "Please fill out all fields.",
-                formData: req.body
-            });
-            return;
-        }
+        var result = cleanResult(await askGemini(buildCodePrompt(data)));
 
-        // Gemini API key
-        var apiKey = process.env.GEMINI_API_KEY;
-        var model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-
-        if (!apiKey || apiKey.includes("your_") || apiKey.includes("_here")) {
-            res.render("code/lab", {
-                title: "Knight Code Lab",
-                result: null,
-                error: "Gemini API key is not configured yet.",
-                formData: req.body
-            });
-            return;
-        }
-        var prompt = `
-You are KnightTrace, an AI coding tutor and code reviewer.
-
-Task: ${actionType}
-Language: ${language}
-
-Code:
-${codeText}
-
-Return only valid JSON in this exact format:
-{
-  "title": "short title",
-  "summary": "short simple summary",
-  "issues": ["issue 1", "issue 2"],
-  "improvements": ["improvement 1", "improvement 2"],
-  "timeComplexity": "Big O time complexity",
-  "spaceComplexity": "Big O space complexity",
-  "testCases": [
-    {
-      "input": "sample input",
-      "expectedOutput": "sample output"
-    }
-  ],
-  "correctedCode": "corrected or improved code if needed"
-}
-`;
-
-        var url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-        var response = await axios.post(url, {
-            contents: [
-                {
-                    parts: [
-                        {
-                            text: prompt
-                        }
-                    ]
-                }
-            ]
-        });
-
-        var aiText = response.data.candidates[0].content.parts[0].text;
-        var result = JSON.parse(cleanJson(aiText));
-
-        var sessions = getCollection("sessions");
-
-        await sessions.insertOne({
+        console.time("Code Lab Mongo Save"); // checks how long database save takes
+        var saved = await getCollection("sessions").insertOne({
             userId: req.user._id.toString(),
             type: "code-lab",
             title: result.title || "Code Lab Session",
-            actionType: actionType,
-            language: language,
-            userInput: codeText,
+            language: data.language,
+            actionType: data.actionType,
+            userInput: data.codeText,
             aiResponse: result,
             userNotes: "",
             isFavorite: false,
@@ -119,17 +51,19 @@ Return only valid JSON in this exact format:
 
         res.render("code/lab", {
             title: "Knight Code Lab",
+            languages: languages,
             result: result,
+            savedId: saved.insertedId,
             error: null,
-            formData: req.body
+            formData: data
         });
     } catch (error) {
-        console.error(error);
-
         res.render("code/lab", {
             title: "Knight Code Lab",
+            languages: languages,
             result: null,
-            error: "AI response failed. Try again with shorter code.",
+            savedId: null,
+            error: error.message,
             formData: req.body
         });
     }

@@ -1,11 +1,15 @@
+// Passport config to sets up Local, Google, and GitHub strategies.
+// Google/GitHub only activate if real OAuth keys are present in .env.
+
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const crypto = require("crypto");
-const { ObjectId } = require("mongodb");
-const { getCollection } = require("../models/db");
+const {ObjectId} = require("mongodb");
+const {getCollection} = require("../models/db");
 
+// Create a secure hashed password using password and salt.
 function createPasswordHash(password, salt) {
     return crypto.scryptSync(password, salt, 64).toString("hex");
 }
@@ -19,6 +23,7 @@ function isRealEnvValue(value) {
     return value && !value.includes("your_") && !value.includes("_here");
 }
 
+// local strategy for login with email, password
 function configurePassport() {
     passport.use(
         new LocalStrategy(
@@ -62,10 +67,11 @@ function configurePassport() {
         )
     );
 
+    // enable google login only if google key exists in .env
     if (
         isRealEnvValue(process.env.GOOGLE_CLIENT_ID) &&
         isRealEnvValue(process.env.GOOGLE_CLIENT_SECRET)
-    ) {
+    ) { //google login
         passport.use(
             new GoogleStrategy(
                 {
@@ -84,14 +90,14 @@ function configurePassport() {
 
                         let user = await users.findOne({
                             $or: [
-                                { googleId: profile.id },
-                                { email: email }
+                                {googleId: profile.id},
+                                {email: email}
                             ]
                         });
 
                         if (user) {
                             await users.updateOne(
-                                { _id: user._id },
+                                {_id: user._id},
                                 {
                                     $set: {
                                         googleId: profile.id,
@@ -128,10 +134,11 @@ function configurePassport() {
         );
     }
 
+    // enable github login only if github key exists in .env
     if (
         isRealEnvValue(process.env.GITHUB_CLIENT_ID) &&
         isRealEnvValue(process.env.GITHUB_CLIENT_SECRET)
-    ) {
+    ) {  //github login
         passport.use(
             new GitHubStrategy(
                 {
@@ -151,14 +158,14 @@ function configurePassport() {
 
                         let user = await users.findOne({
                             $or: [
-                                { githubId: profile.id },
-                                { email: email }
+                                {githubId: profile.id},
+                                {email: email}
                             ]
                         });
 
                         if (user) {
                             await users.updateOne(
-                                { _id: user._id },
+                                {_id: user._id},
                                 {
                                     $set: {
                                         githubId: profile.id,

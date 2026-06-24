@@ -1,12 +1,120 @@
 <%- include("../partials/header") %>
 
 <section class="page-title">
+    <span class="eyebrow"><i class="fa-solid fa-user-tie"></i> Interview Journey</span>
     <h1>Interview Practice</h1>
-    <p>Generate personalized interview questions.</p>
+    <p>Generate role-based, personalized interview questions.</p>
 </section>
 
 <section class="card">
-    <p>This page is connected. Interview generator logic will be added later.</p>
+    <% if (error) { %><p class="error-message"><%= error %></p><% } %>
+
+    <%
+        // Keep selected topics checked after form submit.
+        var selectedTopics = [];
+        if (Array.isArray(formData.topics)) {
+            selectedTopics = formData.topics;
+        } else if (formData.topics) {
+            selectedTopics = formData.topics.split(", ");
+        }
+    %>
+
+    <form action="/interviews/create" method="POST">
+        <label>Target Role</label>
+        <select name="role" required>
+            <option value="" <%= !formData.role ? "selected" : "" %> disabled>Select a role</option>
+
+            <% roles.forEach(function (role) { %>
+                <option value="<%= role %>" <%= formData.role === role ? "selected" : "" %>><%= role %></option>
+            <% }) %>
+        </select>
+
+        <label>Experience Level</label>
+        <select name="level" required>
+            <option value="" <%= !formData.level ? "selected" : "" %> disabled>Select a level</option>
+
+            <% ["Student / New Grad", "Junior (0-2 years)", "Mid-Level (2-5 years)", "Senior (5+ years)"].forEach(function (level) { %>
+                <option value="<%= level %>" <%= formData.level === level ? "selected" : "" %>><%= level %></option>
+            <% }) %>
+        </select>
+
+        <label>Topics</label>
+        <!-- Dropdown-style topic selector. -->
+        <details class="topic-select">
+            <summary>Select topics</summary>
+
+            <div class="topic-menu">
+                <!-- create one checkbox for each topic -->
+                <% topics.forEach(function (topic) { %>
+                    <label>
+                        <input type="checkbox" name="topics" value="<%= topic %>" <%= selectedTopics.includes(topic) ? "checked" : "" %>>
+                        <span><%= topic %></span>
+                    </label>
+                <% }) %>
+            </div>
+        </details>
+
+        <label>Difficulty</label>
+        <select name="difficulty" required>
+            <option value="" <%= !formData.difficulty ? "selected" : "" %> disabled>Select difficulty</option>
+
+            <% difficulties.forEach(function (d) { %>
+                <option value="<%= d %>" <%= formData.difficulty === d ? "selected" : "" %>><%= d %></option>
+            <% }) %>
+        </select>
+
+        <label>Number of Questions</label>
+        <select name="count" required>
+            <option value="" <%= !formData.count ? "selected" : "" %> disabled>Select question count</option>
+
+            <% counts.forEach(function (c) { %>
+                <option value="<%= c %>" <%= formData.count == c ? "selected" : "" %>><%= c %> questions</option>
+            <% }) %>
+        </select>
+
+        <button type="submit">Generate Interview Questions</button>
+    </form>
 </section>
+
+<% if (result) { %>
+    <section class="card result-card">
+        <h2><%= result.title %></h2>
+
+        <% result.questions.forEach(function (q, i) { %>
+            <div class="question-card">
+                <h3>Question <%= i + 1 %>: <%= q.question %></h3>
+
+                <div class="question-actions">
+                    <button type="button" onclick="toggleBox('hint-<%= i %>', this, 'hint')" class="toggle-hint">
+                        <i class="fa-regular fa-lightbulb"></i> <span>Hint</span>
+                    </button>
+
+                    <button type="button" onclick="toggleBox('answer-<%= i %>', this, 'answer')" class="toggle-answer">
+                        <i class="fa-solid fa-eye-slash"></i><span>Show Answer</span>
+                    </button>
+
+                    <form action="/interviews/<%= savedId %>/pin/<%= i %>" method="POST">
+                        <button type="submit"><i class="fa-solid fa-thumbtack"></i> Pin</button>
+                    </form>
+                </div>
+
+                <div id="hint-<%= i %>" class="hidden answer-box">
+                    <p><strong>Hint:</strong> <%= q.hint %></p>
+                </div>
+
+                <div id="answer-<%= i %>" class="hidden answer-box">
+                    <p><strong>Ideal Answer:</strong></p>
+                    <pre class="answer-code"><%= q.idealAnswer %></pre>
+
+                    <% if (q.followUp) { %>
+                        <p><strong>Follow Up:</strong> <%= q.followUp %></p>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>
+
+        <a class="button secondary" href="/sessions/interview/<%= savedId %>">Open Saved Session</a>
+    </section>
+<% } %>
 
 <%- include("../partials/footer") %>

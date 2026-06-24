@@ -1,75 +1,111 @@
 <%- include("../partials/header") %>
 
 <section class="page-title">
+    <span class="eyebrow"><i class="fa-solid fa-code"></i> Knight Code Lab</span>
     <h1>Knight Code Lab</h1>
     <p>Explain, debug, review, or generate test cases for code.</p>
 </section>
 
-<section class="card">
-    <% if (error) { %>
-        <p class="error-message"><%= error %></p>
-    <% } %>
+<section class="split-layout">
+    <section class="card">
+        <% if (error) { %><p class="error-message"><i class="fa-solid fa-triangle-exclamation"></i><%= error %></p><% } %>
 
-    <form action="/code/analyze" method="POST">
-        <label for="actionType">Choose Action</label>
-        <select name="actionType" id="actionType" required>
-            <option value="Explain Code" <%= formData.actionType === "Explain Code" ? "selected" : "" %>>Explain Code</option>
-            <option value="Debug Code" <%= formData.actionType === "Debug Code" ? "selected" : "" %>>Debug Code</option>
-            <option value="Review Code" <%= formData.actionType === "Review Code" ? "selected" : "" %>>Review Code</option>
-            <option value="Generate Test Cases" <%= formData.actionType === "Generate Test Cases" ? "selected" : "" %>>Generate Test Cases</option>
-        </select>
+        <form action="/code/analyze" method="POST">
+            <label>Programming Language</label>
+             <!-- Loads programming language options from the languages array. -->
+            <select name="language" required>
+                 <% languages.forEach(function (lang) { %>
+                    <option value="<%= lang %>" <%= formData.language === lang ? "selected" : "" %>><%= lang %></option>
+                 <% }) %>
+            </select>
 
-        <label for="language">Language</label>
-        <select name="language" id="language" required>
-            <option value="JavaScript" <%= formData.language === "JavaScript" ? "selected" : "" %>>JavaScript</option>
-            <option value="Python" <%= formData.language === "Python" ? "selected" : "" %>>Python</option>
-            <option value="Java" <%= formData.language === "Java" ? "selected" : "" %>>Java</option>
-            <option value="C++" <%= formData.language === "C++" ? "selected" : "" %>>C++</option>
-        </select>
-
-        <label for="codeText">Paste Code</label>
-        <textarea class="code-textarea" name="codeText" id="codeText" rows="12" required><%= formData.codeText || "" %></textarea>
-
-        <button type="submit">Run AI Analysis</button>
-    </form>
-</section>
-
-<% if (result) { %>
-    <section class="card result-card">
-        <h2><%= result.title %></h2>
-        <p><%= result.summary %></p>
-
-        <h3>Issues</h3>
-        <ul>
-            <% result.issues.forEach(function (item) { %>
-                <li><%= item %></li>
-            <% }) %>
-        </ul>
-
-        <h3>Improvements</h3>
-        <ul>
-            <% result.improvements.forEach(function (item) { %>
-                <li><%= item %></li>
-            <% }) %>
-        </ul>
-
-        <h3>Complexity</h3>
-        <p>Time: <%= result.timeComplexity %></p>
-        <p>Space: <%= result.spaceComplexity %></p>
-
-        <h3>Test Cases</h3>
-        <% result.testCases.forEach(function (test) { %>
-            <div class="mini-card">
-                <p><strong>Input:</strong> <%= test.input %></p>
-                <p><strong>Expected Output:</strong> <%= test.expectedOutput %></p>
+            <label>Action</label>
+            <div class="check-grid">
+                 <!-- Loops through action list and creates one radio option for each action. -->
+                <%  [
+                            ["Explain Code", "fa-lightbulb", "Walk through what the code does"],
+                            ["Debug Code", "fa-bug", "Find bugs and errors"],
+                            ["Review Code", "fa-clipboard-check", "Check quality and best practices"],
+                            ["Improve Code", "fa-wand-magic-sparkles", "Suggest better implementation"],
+                            ["Generate Test Cases", "fa-vial", "Create useful test cases"],
+                            ["Analyze Complexity", "fa-gauge-high", "Find time and space complexity"]
+                     ].forEach(function (action) { %>
+                    <label class="check-card">
+                        <input type="radio" name="actionType" value="<%= action[0] %>" required <%= formData.actionType === action[0] ? "checked" : "" %>>
+                        <span><i class="fa-solid <%= action[1] %>"></i> <strong><%= action[0] %></strong><small><%= action[2] %></small></span>
+                    </label>
+                <% }) %>
             </div>
-        <% }) %>
 
-        <h3>Corrected Code</h3>
-        <pre class="code-output"><%= result.correctedCode %></pre>
+             <!-- store pasted code after form submission. -->
+            <label>Paste Code</label>
+            <textarea class="code-textarea" name="codeText" rows="14" required placeholder="Paste your code here..."><%= formData.codeText || "" %></textarea>
 
-        <a class="button secondary" href="/sessions">View Saved History</a>
+            <button type="submit">Run AI Analysis</button>
+        </form>
     </section>
-<% } %>
+
+    <section class="card result-panel">
+        <% if (!result) { %>
+            <div class="empty-state tall-empty">
+                <i class="fa-solid fa-magnifying-glass-chart empty-icon"></i>
+                <h2>AI Analysis will appear here</h2>
+                <p>Select a language, choose an action, and paste your code.</p>
+            </div>
+        <% } else {
+            // Guard against Gemini returning text instead of arrays so the page never crashes
+            var issues =  Array.isArray(result.issues) ? result.issues : [];
+            var improvements = Array.isArray(result.improvements) ? result.improvements : [];
+            var tests = Array.isArray(result.testCases) ? result.testCases : [];
+            %>
+
+            <div class ="result-header">
+                <span class="badge code-lab">Code Lab</span>
+                <h2><%= result.title || "AI Code Review" %></h2>
+                <a class="button secondary small-btn" href="/sessions/code/<%= savedId %>">Open Saved Session</a>
+            </div>
+
+            <details class="result-box" open>
+                <summary><strong><i class="fa-solid fa-circle-info"></i> Summary</strong></summary>
+                <p><%= result.summary || "No summary returned." %></p>
+            </details>
+
+            <details class="result-box">
+                 <summary><strong><i class="fa-solid fa-bug"></i> Issues</strong></summary>
+                 <% if (issues.length) { %><ul><% issues.forEach(function (x) { %><li><%= x %></li><% }) %></ul><%
+                 } else { %><p>No major issues found.</p><% } %>
+            </details>
+            <details class="result-box">
+                 <summary><strong><i class="fa-solid fa-wand-magic-sparkles"></i> Improvements</strong></summary>
+                 <% if (improvements.length) { %><ul><% improvements.forEach(function (x) { %><li><%= x %></li><% }) %></ul><%
+                 } else { %><p>No improvements returned.</p><% } %>
+            </details>
+
+            <details class="result-box">
+                <summary><strong><i class="fa-solid fa-clock"></i> Complexity</strong></summary>
+                <p><strong>Time:</strong> <%= result.timeComplexity || "Not provided" %></p>
+                <p><strong>Space:</strong> <%= result.spaceComplexity || "Not provided" %></p>
+            </details>
+
+            <details class="result-box">
+                <summary><strong><i class="fa-solid fa-vial"></i> Test Cases</strong></summary>
+                <% if (tests.length) { tests.forEach(function (t) { %>
+                    <div class="test-row"><strong>Input:</strong> <%= t.input %><br><strong>Expected:</strong> <%= t.expectedOutput %>
+                    <% if (t.reason) { %><br><small><%= t.reason %></small><% } %></div>
+                <% }) } else { %><p>No test cases returned.</p><% } %>
+            </details>
+
+             <!-- Shows corrected code only if Gemini returns corrected code. -->
+             <% if (result.correctedCode) { %>
+                 <details class="result-section-card">
+                      <summary><strong><i class="fa-solid fa-file-code"></i> Corrected Code</strong></summary>
+                      <button type="button" class="button secondary small-btn" onclick="copyText('corrected-code')">
+                          <i class="fa-regular fa-copy"></i> Copy</button>
+                      <pre id="corrected-code" class="code-output"><%= result.correctedCode %></pre>
+                 </details>
+             <% } %>
+        <% } %>
+    </section>
+</section>
 
 <%- include("../partials/footer") %>

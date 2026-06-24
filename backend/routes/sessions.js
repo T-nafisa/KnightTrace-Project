@@ -1,98 +1,133 @@
+// Session history routes to view, edit, favorite, and delete all saved sessions
+
 var express = require("express");
 var router = express.Router();
 var { ObjectId } = require("mongodb");
-
 var { getCollection } = require("../models/db");
+var { ensureAuthenticated } = require("../utils/auth");
 
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
+function getUserId(req) { return req.user._id.toString(); }
 
-    res.redirect("/users/signin");
+// Maps session type param to its MongoDB collection name
+function getCollectionName(type) {
+    if (type === "interview") return "interviews";
+    if (type === "quiz") return "quizzes";
+    return "sessions";
 }
 
-router.get("/", ensureAuthenticated, async function (req, res) {
-    var sessions = getCollection("sessions");
+// Maps item type to its view URL prefix
+function getTypeUrl(item) {
+    if (item.type === "code-lab") return "code";
+    return item.type;
+}
 
-    var savedSessions = await sessions
-        .find({ userId: req.user._id.toString() })
-        .sort({ createdAt: -1 })
-        .toArray();
-
-    res.render("sessions/index", {
-        title: "Saved Sessions",
-        savedSessions: savedSessions
+// Fetches all user sessions across all three collections, sort by newest one first
+async function getAllItems(req) {
+    var uid = getUserId(req);
+    var code = await getCollection("sessions").find({ userId: uid }).toArray();
+    var interviews = await getCollection("interviews").find({ userId: uid }).toArray();
+    var quizzes = await getCollection("quizzes").find({ userId: uid }).toArray();
+    return code.concat(interviews, quizzes).sort(function (a, b) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
     });
-});
+}
 
-router.get("/:id", ensureAuthenticated, async function (req, res) {
-    var sessions = getCollection("sessions");
+// Session list with optional filter (all, code, interview, quiz, favorite)
+router.get("/", ensureAuthenticated, async function (req, res, next) {
+    try {
+        var filter = req.query.filter || "all";
+        var search = String(req.query.search || "").trim().toLowerCase();
+        var savedSessions = await getAllItems(req);
 
-    var savedSession = await sessions.findOne({
-        _id: new ObjectId(req.params.id),
-        userId: req.user._id.toString()
-    });
-
-    if (!savedSession) {
-        res.redirect("/sessions");
-        return;
-    }
-
-    res.render("sessions/show", {
-        title: savedSession.title,
-        savedSession: savedSession
-    });
-});
-
-router.get("/:id/edit", ensureAuthenticated, async function (req, res) {
-    var sessions = getCollection("sessions");
-
-    var savedSession = await sessions.findOne({
-        _id: new ObjectId(req.params.id),
-        userId: req.user._id.toString()
-    });
-
-    if (!savedSession) {
-        res.redirect("/sessions");
-        return;
-    }
-
-    res.render("sessions/edit", {
-        title: "Edit Session",
-        savedSession: savedSession
-    });
-});
-
-router.post("/:id/update", ensureAuthenticated, async function (req, res) {
-    var sessions = getCollection("sessions");
-
-    await sessions.updateOne(
-        {
-            _id: new ObjectId(req.params.id),
-            userId: req.user._id.toString()
-        },
-        {
-            $set: {
-                title: req.body.title,
-                userNotes: req.body.userNotes,
-                updatedAt: new Date()
-            }
+        var typeMap = { code: "code-lab", interview: "interview", quiz: "quiz" };
+        if (typeMap[filter]) {
+            savedSessions = savedSessions.filter(function (i) { return i.type === typeMap[filter]; });
+        } else if (filter === "favorite") {
+            savedSessions = savedSessions.filter(function (i) { return i.isFavorite; });
         }
-    );
 
-    res.redirect("/sessions/" + req.params.id);
+        if (search) {
+            savedSessions = savedSessions.filter(function (i) {
+                var text = [i.title, i.type, i.topic, i.language, i.role].join(" ").toLowerCase();
+                return text.includes(search);
+            });
+        }
+
+        res.render("sessions/index", { title: "Saved Sessions", savedSessions, filter, search, getTypeUrl });
+    } catch (error) {
+        next(error);
+    }
 });
 
-router.post("/:id/delete", ensureAuthenticated, async function (req, res) {
-    var sessions = getCollection("sessions");
+// View a single saved session
+router.get("/:type/:id", ensureAuthenticated, async function (req, res, next) {
+    try {
+        var item = await getCollection(getCollectionName(req.params.type)).findOne({
+            _id: new ObjectId(req.params.id),
+            userId: getUserId(req)
+        });
+        if (!item) return res.redirect("/sessions");
+        res.render("sessions/show", { title: item.title, item });
+    } catch (error) {
+        next(error);
+    }
+});
 
-    await sessions.deleteOne({
-        _id: new ObjectId(req.params.id),
-        userId: req.user._id.toString()
-    });
+// Edit form for a session
+router.get("/:type/:id/edit", ensureAuthenticated, async function (req, res, next) {
+    try {
+        var item = await getCollection(getCollectionName(req.params.type)).findOne({
+            _id: new ObjectId(req.params.id),
+            userId: getUserId(req)
+        });
+        if (!item) return res.redirect("/sessions");
+        res.render("sessions/edit", { title: "Edit Session", item });
+    } catch (error) {
+        next(error);
+    }
+});
 
-    res.redirect("/sessions");
+// Save title and notes edits
+router.post("/:type/:id/update", ensureAuthenticated, async function (req, res, next) {
+    try {
+        await getCollection(getCollectionName(req.params.type)).updateOne(
+            { _id: new ObjectId(req.params.id), userId: getUserId(req) },
+            { $set: { title: String(req.body.title || "Untitled Session").trim(), userNotes: String(req.body.userNotes || "").trim(), updatedAt: new Date() } }
+        );
+        res.redirect("/sessions/" + req.params.type + "/" + req.params.id);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Toggle favorite flag
+router.post("/:type/:id/favorite", ensureAuthenticated, async function (req, res, next) {
+    try {
+        var collection = getCollection(getCollectionName(req.params.type));
+        var item = await collection.findOne({ _id: new ObjectId(req.params.id), userId: getUserId(req) });
+        if (item) {
+            await collection.updateOne(
+                { _id: item._id },
+                { $set: { isFavorite: !item.isFavorite, updatedAt: new Date() } }
+            );
+        }
+        res.redirect(req.get("referer") || "/sessions");
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Delete a session permanently
+router.post("/:type/:id/delete", ensureAuthenticated, async function (req, res, next) {
+    try {
+        await getCollection(getCollectionName(req.params.type)).deleteOne({
+            _id: new ObjectId(req.params.id),
+            userId: getUserId(req)
+        });
+        res.redirect("/sessions");
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;
